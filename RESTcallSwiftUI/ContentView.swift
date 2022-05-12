@@ -5,17 +5,29 @@
 //  Created by NebSha on 5/12/22.
 //
 
+import Foundation
 import SwiftUI
 
 struct ContentView: View {
+    @State private var simpleText: String = ""
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        Text(simpleText)
+        Button {
+            Task {
+                let (data, _) = try await URLSession.shared.data(from: URL(string:"https://qni31qs1i7.execute-api.us-east-1.amazonaws.com/pingPongStage/pingpongresource")!)
+                let decodedResponse = try? JSONDecoder().decode(SimpleText.self, from: data)
+                simpleText = decodedResponse?.body ?? "_"
+            }
+        } label: {
+            Text("Simple Text")
+        }
     }
 }
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+struct SimpleText: Codable {
+    let body: String
 }
