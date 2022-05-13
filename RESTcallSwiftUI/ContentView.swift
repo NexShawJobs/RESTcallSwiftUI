@@ -18,6 +18,47 @@ struct ContentView: View {
         Button {
             Task {
                 
+                let json1 = """
+                {
+                    "name": "Networking with URLSession",
+                    "language": "Swift",
+                    "version": 5.2
+                }
+                """
+                let json2 = """
+                {
+                    "clientText": "clientText",
+                    "timeStamp": "timeStamp"
+                }
+                """
+
+                
+                guard let uploadUrl = URL(string: "http://127.0.0.1:8080/upload") else {
+                    fatalError()
+                }
+                guard let uploadUr2 = URL(string: "http://127.0.0.1:8080/echo") else {
+                    fatalError()
+                }
+                var request1 = URLRequest(url: uploadUrl)
+                let jsonData1 = json1.data(using: .utf8)
+                request1.httpMethod = "Post"
+                request1.setValue("application/json", forHTTPHeaderField: "Content-type")
+                let urlSession1 = URLSession(configuration: .default)
+                let task1 = urlSession1.uploadTask(with: request1, from: jsonData1) {d, r, e in
+                    print(r ?? "no response")
+                    
+                }
+                task1.resume()
+                
+                request1.url = uploadUr2
+                let jsonData2 = json2.data(using: .utf8)
+                let task2 = urlSession1.uploadTask(with: request1, from: jsonData2) {d, r, e in
+                    print(r ?? "no response")
+                    let jsonResponse = String(decoding: d!, as: UTF8.self)
+                    print(jsonResponse)
+                }
+                task2.resume()
+                        
                 let json = "{ \"ping\" : \"nex\" }"
                 let url :URL = URL(string: "https://qni31qs1i7.execute-api.us-east-1.amazonaws.com/pingPongStage/pingpongresource")!
                 var request = URLRequest(url: url)
